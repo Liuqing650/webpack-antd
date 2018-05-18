@@ -1,46 +1,55 @@
 const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const HappyPack = require('happypack');
+const os = require('os');
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const CSSModules = true;
+const isHappy = true; // 开启多线程打包
 const eslint = true;
 const stylelint = false;
 
-// Setting the plugins for development/prodcution
+console.log(isDev ? '开发模式' : '发布模式');
+
+HappyPack.SERIALIZABLE_OPTIONS = HappyPack.SERIALIZABLE_OPTIONS.concat(['postcss'])
+// 构建HappyPlugin应用
+const createHappyPlugin = (id, loaders) => new HappyPack({
+  id,
+  loaders,
+  threadPool: HappyPack.ThreadPool({ size: os.cpus().length - 1 }),
+  verbose: true, // 日志
+});
+// 设置插件环境 development/prodcution
 const getPlugins = () => {
   // Common
   const plugins = [
     new ExtractTextPlugin({
       filename: '[name].[contenthash:8].css',
-      allChunks: true,
-      disable: isDev, // Disable css extracting on development
-      ignoreOrder: CSSModules
+      allChunks: true
     }),
     new HtmlWebpackPlugin({
-      title: 'webpack-antd-5',
+      title: 'webpack-antd',
       template: path.join(process.cwd(), '/public/index.html')
     }),
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        // Javascript lint
-        eslint: { failOnError: eslint },
-        debug: isDev,
-        minimize: !isDev
-      }
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: Infinity
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest'
     }),
     new StyleLintPlugin({ failOnError: stylelint }),
     new webpack.EnvironmentPlugin({ NODE_ENV: JSON.stringify(nodeEnv) }),
     new webpack.DefinePlugin({
-      __CLIENT__: true,
-      __SERVER__: false,
+      'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
       __DEV__: isDev
     }),
     new webpack.NoEmitOnErrorsPlugin()
@@ -55,14 +64,11 @@ const getPlugins = () => {
     plugins.push(
       new CleanWebpackPlugin(['public/dist']),
       new webpack.HashedModuleIdsPlugin(),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: Infinity
-      }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'manifest'
-      }),
+      new CopyWebpackPlugin([{ 
+        from: 'assets/*', context: 'public/'
+      }]),
       new ParallelUglifyPlugin({
+        cacheDir: '.cache/', // 开启缓存功能
         uglifyJS: {
           output: {
             comments: false
@@ -75,10 +81,70 @@ const getPlugins = () => {
       new webpack.optimize.ModuleConcatenationPlugin()
     );
   }
-
+  if (isHappy) {
+    plugins.push(
+      createHappyPlugin(
+        'babel',
+        [
+          {
+            loader: 'babel-loader',
+            query: {
+              cacheDirectory: isDev
+            }
+          }
+        ]
+      ),
+      createHappyPlugin(
+        'css',
+        [ 'css-loader', 'postcss-loader']
+      ),
+      createHappyPlugin(
+        'less',
+        [
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+              sourceMap: true
+            }
+          },
+          { loader: 'postcss-loader', options: { sourceMap: true } },
+          {
+            loader: 'less-loader',
+            options: {
+              outputStyle: 'expanded',
+              sourceMap: true,
+              sourceMapContents: !isDev
+            }
+          }
+        ]
+      )
+    );
+  }
   return plugins;
 };
 
+// 使用 happypack 时不能携带query.
+// https://github.com/amireh/happypack/issues/145
+const getBabelLoaders = () => {
+  if (isHappy) {
+    return {
+      test: /\.(js|jsx)$/,
+      exclude: /node_modules/,
+      loader: isHappy ? 'happypack/loader?id=babel' : 'babel-loader',
+    };
+  }
+  return {
+    test: /\.(js|jsx)$/,
+    exclude: /node_modules/,
+    loader: 'babel-loader',
+    query: {
+      cacheDirectory: isDev
+    }
+  };
+};
 module.exports = {
   name: 'client',
   target: 'web',
@@ -102,34 +168,46 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
+        test: /\.(js|jsx)?$/,
         enforce: 'pre',
         exclude: /node_modules/,
         loader: 'eslint-loader'
       },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          cacheDirectory: isDev
-        }
-      },
+      getBabelLoaders(),
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract(['style-loader', 'css-loader'])
+        exclude: /node_modules/,
+        use: ExtractTextPlugin.extract(// 'happypack/loader?id=css'
+          isHappy ? ('style-loader', 'happypack/loader?id=css') :
+          [
+            'style-loader',
+            'css-loader',
+            'postcss-loader'
+          ]
+        )
       }, {
         test: /\.less$/,
-        use: ExtractTextPlugin.extract([{
-          loader: 'css-loader',
-          options: {
-            modules: true,
-            importLoaders: 1,
-            localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
-            sourceMap: true
+        use: ExtractTextPlugin.extract(
+          isHappy ? 'happypack/loader?id=less' : 
+          [{
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+              sourceMap: true
+            }
+          },
+          { loader: 'postcss-loader', options: { sourceMap: true } },
+          {
+            loader: 'less-loader',
+            options: {
+              outputStyle: 'expanded',
+              sourceMap: true,
+              sourceMapContents: !isDev
+            }
           }
-        },
-          'less-loader'])
+        ])
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -149,5 +227,9 @@ module.exports = {
         ]
       }
     ]
+  },
+  resolve: {
+    modules: [path.resolve(__dirname, 'src/'), 'node_modules'],
+    extensions: ['.js', '.jsx', '.json']
   }
 };

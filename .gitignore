@@ -2,6 +2,7 @@
 .vscode/
 node_modules/
 *.iml
-dist/
+.cache/
+public/dist/*
 npm-debug.log
 yarn-error.log
