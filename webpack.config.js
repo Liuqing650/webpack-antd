@@ -27,6 +27,7 @@ const createHappyPlugin = (id, loaders) => new HappyPack({
   threadPool: HappyPack.ThreadPool({ size: os.cpus().length - 1 }),
   verbose: true, // 日志
 });
+
 // 设置插件环境 development/prodcution
 const getPlugins = () => {
   // Common
@@ -96,7 +97,26 @@ const getPlugins = () => {
       ),
       createHappyPlugin(
         'css',
-        [ 'css-loader', 'postcss-loader']
+        ['css-loader', 'postcss-loader']
+      ),
+      createHappyPlugin(
+        'cssModules',
+        [
+          'css-loader',
+          'postcss-loader'
+        ]
+      ),
+      createHappyPlugin(
+        'lessModules',
+        [
+          'css-loader', 'postcss-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              javascriptEnabled: true
+            }
+          }
+        ]
       ),
       createHappyPlugin(
         'less',
@@ -105,6 +125,7 @@ const getPlugins = () => {
             loader: 'css-loader',
             options: {
               modules: true,
+              import: true,
               importLoaders: 1,
               localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
               sourceMap: true
@@ -116,6 +137,7 @@ const getPlugins = () => {
             options: {
               outputStyle: 'expanded',
               sourceMap: true,
+              javascriptEnabled: true,
               sourceMapContents: !isDev
             }
           }
@@ -133,7 +155,7 @@ const getBabelLoaders = () => {
     return {
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
-      loader: isHappy ? 'happypack/loader?id=babel' : 'babel-loader',
+      loader: 'happypack/loader?id=babel'
     };
   }
   return {
@@ -145,13 +167,22 @@ const getBabelLoaders = () => {
     }
   };
 };
+const vendor = [
+  'react',
+  'react-dom',
+  'redbox-react'
+  // 'axios'
+];
 module.exports = {
   name: 'client',
   target: 'web',
   cache: isDev,
   profile: isDev, // 是否捕捉 Webpack 构建的性能信息
   context: path.resolve(process.cwd()),
-  entry: './src/index.js',
+  entry: {
+    index: './src/index.js',
+    vendor
+  },
   devtool: isDev ? 'inline-source-map' : 'hidden-source-map',
   output: {
     path: path.join(__dirname, 'public/dist'),
@@ -162,7 +193,10 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, "public"),
-    historyApiFallback: true
+    historyApiFallback: true,
+    headers: {
+      'maby': 'demo'
+    }
   },
   plugins: getPlugins(),
   module: {
@@ -176,8 +210,18 @@ module.exports = {
       getBabelLoaders(),
       {
         test: /\.css$/,
+        include: /node_modules/,
+        use: ExtractTextPlugin.extract(
+          isHappy ? ('style-loader', 'happypack/loader?id=cssModules') :
+          [
+            'style-loader', 'css-loader', 'postcss-loader'
+          ]
+        )
+      },
+      {
+        test: /\.css$/,
         exclude: /node_modules/,
-        use: ExtractTextPlugin.extract(// 'happypack/loader?id=css'
+        use: ExtractTextPlugin.extract(
           isHappy ? ('style-loader', 'happypack/loader?id=css') :
           [
             'style-loader',
@@ -187,27 +231,47 @@ module.exports = {
         )
       }, {
         test: /\.less$/,
+        include: /node_modules/,
+        use: ExtractTextPlugin.extract(
+          isHappy ? ('style-loader', 'happypack/loader?id=lessModules') :
+          [
+            'css-loader', 'postcss-loader', 
+              {
+                loader: 'less-loader',
+                options: {
+                  javascriptEnabled: true
+                }
+              }
+          ]
+        )
+      }, {
+        test: /\.less$/,
+        exclude: /node_modules/,
         use: ExtractTextPlugin.extract(
           isHappy ? 'happypack/loader?id=less' : 
-          [{
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              importLoaders: 1,
-              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
-              sourceMap: true
+          [
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                import: true,
+                importLoaders: 1,
+                localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+                sourceMap: true
+              }
+            },
+            { loader: 'postcss-loader', options: { sourceMap: true } },
+            {
+              loader: 'less-loader',
+              options: {
+                outputStyle: 'expanded',
+                sourceMap: true,
+                javascriptEnabled: true,
+                sourceMapContents: !isDev
+              }
             }
-          },
-          { loader: 'postcss-loader', options: { sourceMap: true } },
-          {
-            loader: 'less-loader',
-            options: {
-              outputStyle: 'expanded',
-              sourceMap: true,
-              sourceMapContents: !isDev
-            }
-          }
-        ])
+          ]
+        )
       },
       {
         test: /\.(png|svg|jpg|gif)$/,

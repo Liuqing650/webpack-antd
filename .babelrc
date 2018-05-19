@@ -4,13 +4,16 @@
     "stage-0",
     "es2015"
   ],
+  "comments": true,
   "plugins": [
     "transform-runtime",
     "transform-decorators-legacy",
     [
       "import",
       {
-        "libraryName": "antd"
+        "libraryName": "antd",
+        "libraryDirectory": "es",
+        "style": true
       }
     ],
     [
@@ -19,5 +22,22 @@
         "spec": true
       }
     ]
-  ]
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        [
+          "react-transform",
+          {
+            "transforms": [
+              {
+                "transform": "react-transform-catch-errors",
+                "imports": ["react", "redbox-react"]
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  }
 }
