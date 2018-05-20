@@ -3,4 +3,5 @@ dist/
 mock/
 public/
 src/assets/
+src/mockApi/
 webpack.config.js

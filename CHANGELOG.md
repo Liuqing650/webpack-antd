@@ -1,6 +1,12 @@
 
 > The latest CHANGELOG is written in https://github.com/Liuqing650/webpack-antd/releases .
 
+## `0.0.2`
+
+  - 添加新分支`antd-dva`,配置 `webpack` + `dva`
+  - 添加 `axios`
+  - 添加 `mockjs`
+
 ## `0.0.1`
 
   - First version

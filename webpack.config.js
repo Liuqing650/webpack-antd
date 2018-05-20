@@ -13,7 +13,7 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const isHappy = true; // 开启多线程打包
+const isHappy = !isDev; // 开启多线程打包
 const eslint = true;
 const stylelint = false;
 
@@ -24,6 +24,7 @@ HappyPack.SERIALIZABLE_OPTIONS = HappyPack.SERIALIZABLE_OPTIONS.concat(['postcss
 const createHappyPlugin = (id, loaders) => new HappyPack({
   id,
   loaders,
+  cache: true,
   threadPool: HappyPack.ThreadPool({ size: os.cpus().length - 1 }),
   verbose: true, // 日志
 });
@@ -170,8 +171,10 @@ const getBabelLoaders = () => {
 const vendor = [
   'react',
   'react-dom',
-  'redbox-react'
-  // 'axios'
+  'redbox-react',
+  'react-router',
+  'antd',
+  'axios'
 ];
 module.exports = {
   name: 'client',
