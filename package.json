@@ -12,7 +12,7 @@
   },
   "betterScripts": {
     "start": {
-      "command": "webpack-dev-server --open --config webpack.config.js",
+      "command": "webpack-dev-server --progress --open --config webpack.config.js",
       "env": {
         "NODE_PATH": "./src",
         "NODE_ENV": "development",
@@ -20,7 +20,7 @@
       }
     },
     "build": {
-      "command": "webpack --config webpack.config.js",
+      "command": "webpack --progress --config webpack.config.js",
       "env": {
         "NODE_PATH": "./src",
         "NODE_ENV": "production",

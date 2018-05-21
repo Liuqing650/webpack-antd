@@ -13,7 +13,7 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const isHappy = true; // 开启多线程打包
+const isHappy = !isDev; // 开启多线程打包
 const eslint = true;
 const stylelint = false;
 
@@ -196,6 +196,11 @@ module.exports = {
     historyApiFallback: true,
     headers: {
       'maby': 'demo'
+    },
+    overlay: true,
+    stats: {
+      color: true,
+      modules: false
     }
   },
   plugins: getPlugins(),
