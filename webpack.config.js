@@ -172,8 +172,6 @@ const vendor = [
   'react',
   'react-dom',
   'redbox-react',
-  'react-router',
-  'antd',
   'axios'
 ];
 module.exports = {
@@ -197,6 +195,11 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, "public"),
     historyApiFallback: true,
+    overlay: true,
+    stats: {
+      modules: false,
+      colors: true
+    },
     headers: {
       'maby': 'demo'
     }
