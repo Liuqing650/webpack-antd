@@ -1,7 +1,7 @@
 
 > The latest CHANGELOG is written in https://github.com/Liuqing650/webpack-antd/releases .
 
-## `0.0.2`
+## `1.0.1`
 
   - 添加新分支`antd-dva`,配置 `webpack` + `dva`
   - 添加 `axios`
@@ -10,7 +10,7 @@
   - 调整开发模式的控制台日志显示,关闭 `modules: false`
   - 调整构建模块信息.展示运行进度 `--progress`
 
-## `0.0.1`
+## `1.0.0`
 
   - First version
   - 添加webpacke-dev-server配置
