@@ -1,26 +1,19 @@
 {
   "presets": [
     "react",
-    "stage-0",
-    "es2015"
+    "es2015",
+    "stage-0"
   ],
   "comments": true,
   "plugins": [
     "transform-runtime",
     "transform-decorators-legacy",
-    "dva-hmr",
     [
       "import",
       {
         "libraryName": "antd",
         "libraryDirectory": "es",
         "style": true
-      }
-    ],
-    [
-      "transform-class-properties",
-      {
-        "spec": true
       }
     ]
   ],

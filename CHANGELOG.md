@@ -1,6 +1,13 @@
 
 > The latest CHANGELOG is written in https://github.com/Liuqing650/webpack-antd/releases .
 
+## `1.0.2`
+
+  - 添加新分支`antd-mobx`,配置 `webpack` + `mobx`
+  - 添加 `mobx`
+  - 添加 `pathval`
+  - 新增基于 `antd + mobx + axios` 的 `Demo`, 详情在新分支 `antd-mobx`
+
 ## `1.0.1`
 
   - 添加新分支`antd-dva`,配置 `webpack` + `dva`

@@ -1,24 +1,19 @@
-import dva from 'dva';
-// 引入路由
-import router from './router';
-// 引入model
-import home from './models/home';
-// 引入全局样式
-import './index.less';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Router, browserHistory } from 'react-router';
+import { Provider } from 'mobx-react';
+import * as allStores from 'stores';
+import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
+import getRoutes from './router';
 
-// 1. Initialize
-const app = dva();
+const routingStore = new RouterStore();
+const history = syncHistoryWithStore(browserHistory, routingStore);
+const renderDom = document.getElementById('root');
 
-// 2. Plugins
-// app.use({});
-
-// 3. Model
-// bug: 不用require()导入
-// https://github.com/dvajs/dva/issues/261
-app.model(home);
-
-// 4. Router
-app.router(router);
-
-// 5. Start
-app.start('#root');
+allStores.routing = routingStore;
+ReactDOM.render(
+  <Provider {...allStores}>
+    <Router routes={getRoutes(allStores)} history={history} />
+  </Provider>,
+  renderDom
+);

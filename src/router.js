@@ -1,15 +1,22 @@
 import React from 'react';
-import { Router, Route, Switch } from 'dva/router';
-import HomePage from './routes/HomePage';
+import { Route, IndexRoute, Redirect } from 'react-router';
+import handleTitle from 'helpers/handleTitle';
+import {
+  App,
+  HomePage,
+} from 'containers';
 
-function RouterConfig({ history }) {
-  return (
-    <Router history={history}>
-      <Switch>
-        <Route path="/" exact component={HomePage} />
-      </Switch>
-    </Router>
-  );
+// 各个路由进入时的配置
+function requireAuth(allStores, nextState, replace) {
+  const title = handleTitle(nextState.location);
+  document.title = title;
 }
-
-export default RouterConfig;
+export default ({ allStores }) => {
+  return (
+    <Route path="/" component={App}>
+      <IndexRoute component={HomePage} />
+      <Route path="/home" exact component={HomePage} onEnter={requireAuth.bind(null, allStores)} />
+      <Redirect from="*" to="/" />
+    </Route>
+  );
+};
