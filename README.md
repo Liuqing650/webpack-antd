@@ -51,6 +51,7 @@
   12. 调整开发模式的控制台日志显示,关闭 `modules: false` 
   13. 调整构建模块信息.展示运行进度 `--progress`
   14. 新增 [`autodll-webpack-plugin`](https://github.com/asfktz/autodll-webpack-plugin) 插件
+  15. 新增 `isAutoDll = false` 配置项, 默认关闭 `dll` 功能
 
 ## 多线程打包测试结果
 

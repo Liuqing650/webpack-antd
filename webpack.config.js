@@ -14,9 +14,11 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const isHappy = !isDev; // 开启多线程打包
+const isHappy = false; // 开启多线程打包
+const isAutoDll = false; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
+
 const vendor = [
   'react',
   'react-dom',
@@ -54,14 +56,6 @@ const getPlugins = () => {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest'
     }),
-    new AutoDllPlugin({
-      // context: path.resolve(process.cwd()),
-      inject: true,
-      filename: '[name].dll.js',
-      entry: {
-        vendor
-      }
-    }),
     new StyleLintPlugin({ failOnError: stylelint }),
     new webpack.EnvironmentPlugin({ NODE_ENV: JSON.stringify(nodeEnv) }),
     new webpack.DefinePlugin({
@@ -70,7 +64,6 @@ const getPlugins = () => {
     }),
     new webpack.NoEmitOnErrorsPlugin()
   ];
-
   if (isDev) {
     plugins.push(
       new webpack.HotModuleReplacementPlugin(),
@@ -96,6 +89,18 @@ const getPlugins = () => {
       }),
       new webpack.optimize.ModuleConcatenationPlugin()
     );
+  }
+  if (isAutoDll) {
+    plugins.push(
+      new AutoDllPlugin({
+        context: path.resolve(process.cwd()),
+        inject: true,
+        filename: '[name].dll.js',
+        entry: {
+          vendor
+        }
+      })
+    )
   }
   if (isHappy) {
     plugins.push(
