@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const AutoDllPlugin = require('autodll-webpack-plugin');
 const HappyPack = require('happypack');
 const os = require('os');
 
@@ -16,6 +17,12 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 const isHappy = !isDev; // 开启多线程打包
 const eslint = true;
 const stylelint = false;
+const vendor = [
+  'react',
+  'react-dom',
+  'redbox-react'
+  // 'axios'
+];
 
 console.log(isDev ? '开发模式' : '发布模式');
 
@@ -46,6 +53,14 @@ const getPlugins = () => {
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest'
+    }),
+    new AutoDllPlugin({
+      // context: path.resolve(process.cwd()),
+      inject: true,
+      filename: '[name].dll.js',
+      entry: {
+        vendor
+      }
     }),
     new StyleLintPlugin({ failOnError: stylelint }),
     new webpack.EnvironmentPlugin({ NODE_ENV: JSON.stringify(nodeEnv) }),
@@ -167,12 +182,6 @@ const getBabelLoaders = () => {
     }
   };
 };
-const vendor = [
-  'react',
-  'react-dom',
-  'redbox-react'
-  // 'axios'
-];
 module.exports = {
   name: 'client',
   target: 'web',
