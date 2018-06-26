@@ -27,7 +27,7 @@
     - 作用: 第三方库单独提取出来后，新增文件时 vendor 的文件名依然会修改， 使用插件解决此问题
     - 插件: NamedModulesPlugin 或者 HashedModuleIdsPlugin 
     - 区别: NamedModulesPlugin 使用模块的路径，而不是数字标识符,有助于在开发过程中输出结果的可读性, HashedModuleIdsPlugin 是数字标识符, 执行时间会短一些
-  4. 新增多线程打包配置项, isHappy = true; 默认开启
+  4. 新增多线程打包配置项, isHappy = false; 默认关闭
 
   5. 修复了样式路径错误问题
     问题出现原因:
@@ -51,7 +51,7 @@
   12. 调整开发模式的控制台日志显示,关闭 `modules: false` 
   13. 调整构建模块信息.展示运行进度 `--progress`
   14. 新增 [`autodll-webpack-plugin`](https://github.com/asfktz/autodll-webpack-plugin) 插件
-  15. 新增 `isAutoDll = false` 配置项, 默认关闭 `dll` 功能
+  15. 新增 `isAutoDll = true` 配置项, 默认开启 `dll` 功能
 
 ## 多线程打包测试结果
 

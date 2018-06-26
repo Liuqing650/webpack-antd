@@ -15,7 +15,7 @@ const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 const isHappy = false; // 开启多线程打包
-const isAutoDll = false; // 是否开启 autodll
+const isAutoDll = true; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
 
