@@ -95,6 +95,7 @@ const getPlugins = () => {
       new AutoDllPlugin({
         context: path.resolve(process.cwd()),
         inject: true,
+        path: '/dll',
         filename: '[name].dll.js',
         entry: {
           vendor
