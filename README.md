@@ -59,7 +59,7 @@
 
 **npm安装 install** npm install
 
-**yarn安装(推荐)** yarn
+**yarn安装** yarn
 
 **开发环境** npm start
 
@@ -103,7 +103,7 @@ webpack-antd
 |  |     |   |     └index.js
 |  |     |   ├─Loading
 |  |     |   |    └index.js
-├─public 
+├─public
 |   ├─404.html
 |   ├─index.html
 |   ├─tree.txt
