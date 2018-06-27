@@ -55,6 +55,71 @@
   16. 新增 `request` 处理请求
   17. 新增 **Mock** 数据配置入口
 
+## 使用
+
+**npm安装 install** npm install
+
+**yarn安装(推荐)** yarn
+
+**开发环境** npm start
+
+**发布到线上环境** npm run build
+
+**发布到预览环境** npm run preview
+
+## 目录结构
+
+```base
+webpack-antd
+├─src
+|  ├─index.js 入口文件
+|  ├─index.less 全局样式
+|  ├─router.js 路由
+|  ├─utils 工具
+|  |   ├─config.js web配置
+|  |   ├─index.js
+|  |   ├─loadable.js 页面动态加载,可配置加载loading效果
+|  |   └request.js 请求配置
+|  ├─services 请求
+|  |    └home.js
+|  ├─routes
+|  |   ├─SecondPage
+|  |   |     └index.js
+|  |   ├─HomePage
+|  |   |    └index.js
+|  ├─models
+|  |   └home.js
+|  ├─mock mock数据源
+|  |  └index.js
+|  ├─components
+|  |     ├─tables
+|  |     |   ├─index.js
+|  |     |   └index.less
+|  |     ├─list
+|  |     |  ├─index.js
+|  |     |  └index.less
+|  |     ├─common
+|  |     |   ├─LoadingHoc
+|  |     |   |     └index.js
+|  |     |   ├─Loading
+|  |     |   |    └index.js
+├─public 
+|   ├─404.html
+|   ├─index.html
+|   ├─tree.txt
+|   ├─dist 打包文件
+|   ├─assets 静态资源,打包后将自动复制到 dist目录下,且不会进行压缩
+|   |   └favicon.ico
+├─.babelrc
+├─.eslintignore
+├─.eslintrc
+├─.gitignore
+├─Makefile 执行 npm run preview 的命令文件,不能在Windows使用
+├─package.json
+├─webpack.config.js webpack 配置文件
+
+```
+
 ## 多线程打包测试结果
 
 |状态|是否开启多线程|首次运行(ms)|再次运行(ms)|三次运行(ms)|四次(ms)|五次运行(ms)|

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --progress --watch",
+    "treer": "node ./treer.js -e ./public/antd_dva_tree.txt -i \"(node_modules|dist|.git|preview|.cache)\"",
     "start": "better-npm-run start",
     "build": "better-npm-run build",
     "preview": "better-npm-run preview && npm run clean && make preview",
