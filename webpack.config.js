@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const AutoDllPlugin = require('autodll-webpack-plugin');
 const HappyPack = require('happypack');
 const os = require('os');
 
@@ -13,9 +14,18 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const isHappy = !isDev; // 开启多线程打包
+const isHappy = false; // 开启多线程打包
+const isAutoDll = true; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
+
+const vendor = [
+  'react',
+  'react-dom',
+  // 'react-loadable',
+  'redbox-react',
+  'axios'
+];
 
 console.log(isDev ? '开发模式' : '发布模式');
 
@@ -66,9 +76,6 @@ const getPlugins = () => {
     plugins.push(
       new CleanWebpackPlugin(['public/dist']),
       new webpack.HashedModuleIdsPlugin(),
-      new CopyWebpackPlugin([{ 
-        from: 'assets/*', context: 'public/'
-      }]),
       new ParallelUglifyPlugin({
         cacheDir: '.cache/', // 开启缓存功能
         uglifyJS: {
@@ -80,8 +87,23 @@ const getPlugins = () => {
           }
         }
       }),
-      new webpack.optimize.ModuleConcatenationPlugin()
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new CopyWebpackPlugin([{ 
+        from: 'assets/*', context: 'public/'
+      }])
     );
+  }
+  if (isAutoDll) {
+    plugins.push(
+      new AutoDllPlugin({
+        context: path.resolve(process.cwd()),
+        inject: true,
+        filename: '[name].dll.js',
+        entry: {
+          vendor
+        }
+      })
+    )
   }
   if (isHappy) {
     plugins.push(
@@ -168,12 +190,6 @@ const getBabelLoaders = () => {
     }
   };
 };
-const vendor = [
-  'react',
-  'react-dom',
-  'redbox-react',
-  'axios'
-];
 module.exports = {
   name: 'client',
   target: 'web',
@@ -194,7 +210,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, "public"),
-    historyApiFallback: true,
+    historyApiFallback: false,
     overlay: true,
     stats: {
       modules: false,

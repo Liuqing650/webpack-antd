@@ -4,7 +4,8 @@ import styles from './index.less';
 
 const TableCom = ({
   tableData,
-  onRefresh
+  onRefresh,
+  onGo
 }) => {
   const columns = [{
     title: '姓名',
@@ -23,6 +24,7 @@ const TableCom = ({
     <div className={styles.wrap}>
       <div>
         <Button type="primary" onClick={onRefresh}>刷新数据</Button>
+        <Button type="primary" onClick={onGo}>跳转下一页</Button>
       </div>
       <Table
         dataSource={tableData || []}

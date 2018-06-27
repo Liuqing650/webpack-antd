@@ -1,8 +1,7 @@
 .idea/
 .vscode/
-node_modules/
-*.iml
 .cache/
+node_modules/
 public/dist/*
 npm-debug.log
 yarn-error.log

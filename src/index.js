@@ -1,13 +1,20 @@
+import '@babel/polyfill';
 import dva from 'dva';
+import createHistory from 'history/createHashHistory';
+// import createHistory from 'history/createBrowserHistory';
 // 引入路由
 import router from './router';
 // 引入model
 import home from './models/home';
 // 引入全局样式
 import './index.less';
+// 引入mock
+import './mock';
 
 // 1. Initialize
-const app = dva();
+const app = dva({
+  history: createHistory(),
+});
 
 // 2. Plugins
 // app.use({});

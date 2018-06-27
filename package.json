@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --progress --watch",
     "start": "better-npm-run start",
-    "build": "better-npm-run build"
+    "build": "better-npm-run build",
+    "preview": "better-npm-run preview && npm run clean && make preview",
+    "clean": "make clean"
   },
   "betterScripts": {
     "start": {
@@ -25,12 +27,23 @@
         "NODE_ENV": "production",
         "PORT": 3600
       }
+    },
+    "preview": {
+      "command": "webpack --progress --config webpack.config.js",
+      "env": {
+        "NODE_PATH": "./src",
+        "NODE_ENV": "production",
+        "ASSET_PATH": "./",
+        "PORT": 3600
+      }
     }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
+    "autodll-webpack-plugin": "0.3",
     "autoprefixer": "^8.5.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -60,12 +73,15 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.5",
     "happypack": "^4.0.1",
+    "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "immutable": "3.7.4",
     "less": "^3.0.1",
     "less-loader": "^4.1.0",
+    "node-uuid": "^1.4.8",
     "os": "^0.1.1",
     "postcss-loader": "^2.1.4",
+    "react-loadable": "^5.4.0",
     "react-transform-catch-errors": "^1.0.2",
     "redbox-react": "^1.6.0",
     "rimraf": "^2.6.2",

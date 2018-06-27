@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import TableCom from 'components/tables';
+import hoc from 'components/common/LoadingHoc';
 
 const HomePage = ({dispatch, location, home}) => {
   const { tableData } = home;
@@ -11,6 +13,9 @@ const HomePage = ({dispatch, location, home}) => {
       dispatch({
         type: 'home/getUsers',
       });
+    },
+    onGo() {
+      dispatch(routerRedux.push('/list'));
     }
   };
   return (
@@ -22,4 +27,4 @@ const HomePage = ({dispatch, location, home}) => {
     </div>
   );
 };
-export default connect(({home}) => ({home}))(HomePage);
+export default connect(({home}) => ({home, loading: home.loading}))(hoc(HomePage));
