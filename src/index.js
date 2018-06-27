@@ -6,10 +6,10 @@ import createHistory from 'history/createHashHistory';
 import router from './router';
 // 引入model
 import home from './models/home';
-// 引入全局样式
-import './index.less';
-// 引入mock
+// 引入全局样式, mock, 拦截请求,设置token信息等
 import './mock';
+import './utils/axiosRequest';
+import './index.less';
 
 // 1. Initialize
 const app = dva({

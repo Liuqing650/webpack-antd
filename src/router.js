@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router, Route, Switch } from 'dva/router';
-import loadable from 'utils/loadable';
+import { loadable } from 'utils';
 // 直接加载
 // import HomePage from './routes/HomePage';
 

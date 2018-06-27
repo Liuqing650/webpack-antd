@@ -64,6 +64,7 @@ export default {
     *getList({ payload }, { call, put }) {
       yield put({type: 'change', payload: {loading: true}});
       const data = yield call(getList);
+      console.log('data---->', data);
       message.success('列表数据已经刷新...');
       const date = new Date();
       const time = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() + 1} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
