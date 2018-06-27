@@ -22,8 +22,9 @@ const stylelint = false;
 const vendor = [
   'react',
   'react-dom',
-  'redbox-react'
-  // 'axios'
+  // 'react-loadable',
+  'redbox-react',
+  'axios'
 ];
 
 console.log(isDev ? '开发模式' : '发布模式');
@@ -33,6 +34,7 @@ HappyPack.SERIALIZABLE_OPTIONS = HappyPack.SERIALIZABLE_OPTIONS.concat(['postcss
 const createHappyPlugin = (id, loaders) => new HappyPack({
   id,
   loaders,
+  cache: true,
   threadPool: HappyPack.ThreadPool({ size: os.cpus().length - 1 }),
   verbose: true, // 日志
 });
@@ -73,9 +75,6 @@ const getPlugins = () => {
     plugins.push(
       new CleanWebpackPlugin(['public/dist']),
       new webpack.HashedModuleIdsPlugin(),
-      new CopyWebpackPlugin([{ 
-        from: 'assets/*', context: 'public/'
-      }]),
       new ParallelUglifyPlugin({
         cacheDir: '.cache/', // 开启缓存功能
         uglifyJS: {
@@ -87,7 +86,10 @@ const getPlugins = () => {
           }
         }
       }),
-      new webpack.optimize.ModuleConcatenationPlugin()
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new CopyWebpackPlugin([{ 
+        from: 'assets/*', context: 'public/'
+      }])
     );
   }
   if (isAutoDll) {
@@ -207,7 +209,12 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, "public"),
-    historyApiFallback: true,
+    historyApiFallback: false,
+    overlay: true,
+    stats: {
+      modules: false,
+      colors: true
+    },
     headers: {
       'maby': 'demo'
     },

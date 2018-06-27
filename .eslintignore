@@ -1,6 +1,11 @@
+.idea
+.DS_Store
+*.log
 node_modules/
 dist/
 mock/
 public/
+preview/
 src/assets/
+src/mockApi/
 webpack.config.js

@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --progress --watch",
-    "dev": "webpack-dev-server --open --config webpack.dev.js",
     "start": "better-npm-run start",
-    "build": "better-npm-run build"
+    "build": "better-npm-run build",
+    "preview": "better-npm-run preview && npm run clean && make preview",
+    "clean": "make clean"
   },
   "betterScripts": {
     "start": {
@@ -26,23 +27,33 @@
         "NODE_ENV": "production",
         "PORT": 3600
       }
+    },
+    "preview": {
+      "command": "webpack --progress --config webpack.config.js",
+      "env": {
+        "NODE_PATH": "./src",
+        "NODE_ENV": "production",
+        "ASSET_PATH": "./",
+        "PORT": 3600
+      }
     }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
     "autodll-webpack-plugin": "0.3",
     "autoprefixer": "^8.5.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
     "babel-loader": "^7.1.4",
+    "babel-plugin-dva-hmr": "^0.4.1",
     "babel-plugin-import": "^1.7.0",
     "babel-plugin-react-transform": "^3.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
@@ -62,12 +73,15 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.5",
     "happypack": "^4.0.1",
+    "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "immutable": "3.7.4",
     "less": "^3.0.1",
     "less-loader": "^4.1.0",
+    "node-uuid": "^1.4.8",
     "os": "^0.1.1",
     "postcss-loader": "^2.1.4",
+    "react-loadable": "^5.4.0",
     "react-transform-catch-errors": "^1.0.2",
     "redbox-react": "^1.6.0",
     "rimraf": "^2.6.2",
@@ -81,7 +95,11 @@
   },
   "dependencies": {
     "antd": "^3.5.2",
+    "axios": "^0.18.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-runtime": "^6.26.0",
+    "dva": "^2.2.3",
+    "mockjs": "^1.0.1-beta3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router": "^4.2.0"

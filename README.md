@@ -50,8 +50,10 @@
   11. 修复错误日志不显示在屏幕的问题
   12. 调整开发模式的控制台日志显示,关闭 `modules: false` 
   13. 调整构建模块信息.展示运行进度 `--progress`
-  14. 新增 [`autodll-webpack-plugin`](https://github.com/asfktz/autodll-webpack-plugin) 插件
-  15. 新增 `isAutoDll = true` 配置项, 默认开启 `dll` 功能
+  14. 新增 [`autodll-webpack-plugin`](https://github.com/asfktz/autodll-webpack-plugin) 插件, 新增 `isAutoDll = true` 配置项, 默认开启 `dll` 功能 打包性能有所提升
+  15. 新增预览命令 `npm run preview`, 且在 `Ubuntu` 下执行有效, 不支持 `Windows`
+  16. 新增 `request` 处理请求
+  17. 新增 **Mock** 数据配置入口
 
 ## 多线程打包测试结果
 

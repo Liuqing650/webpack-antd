@@ -11,6 +11,7 @@
     "array-callback-return": [
       0
     ],
+    "arrow-parens": [0],
     "no-unused-expressions": [
       0
     ],
@@ -95,6 +96,7 @@
     "jsx-a11y/no-static-element-interactions": [
       0
     ],
+    "jsx-a11y/anchor-is-valid": [0],
     "no-nested-ternary": [
       0
     ],
@@ -150,6 +152,7 @@
     "no-undef": [
       0
     ],
+    "object-curly-newline": [0],
     "no-unused-vars": [
       2,
       {
@@ -202,8 +205,7 @@
       0
     ],
     "comma-dangle": [
-      2,
-      "never"
+      0
     ],
     "no-underscore-dangle": [
       0
