@@ -6,28 +6,26 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const HappyPack = require('happypack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const os = require('os');
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
+const ANALYZER = process.env.ANALYZER || false;
 
-const isHappy = !isDev; // 开启多线程打包
 const eslint = true;
 const stylelint = false;
 
+const vendor = [
+  'react',
+  'react-dom',
+  'mockjs',
+  'redbox-react',
+  'axios'
+];
 console.log(isDev ? '开发模式' : '发布模式');
 
-HappyPack.SERIALIZABLE_OPTIONS = HappyPack.SERIALIZABLE_OPTIONS.concat(['postcss'])
-// 构建HappyPlugin应用
-const createHappyPlugin = (id, loaders) => new HappyPack({
-  id,
-  loaders,
-  cache: true,
-  threadPool: HappyPack.ThreadPool({ size: os.cpus().length - 1 }),
-  verbose: true, // 日志
-});
 
 // 设置插件环境 development/prodcution
 const getPlugins = () => {
@@ -56,7 +54,11 @@ const getPlugins = () => {
     }),
     new webpack.NoEmitOnErrorsPlugin()
   ];
-
+  if (ANALYZER) {
+    plugins.push(
+      new BundleAnalyzerPlugin(),
+    );
+  }
   if (isDev) {
     plugins.push(
       new webpack.HotModuleReplacementPlugin(),
@@ -83,82 +85,12 @@ const getPlugins = () => {
       new webpack.optimize.ModuleConcatenationPlugin()
     );
   }
-  if (isHappy) {
-    plugins.push(
-      createHappyPlugin(
-        'babel',
-        [
-          {
-            loader: 'babel-loader',
-            query: {
-              cacheDirectory: isDev
-            }
-          }
-        ]
-      ),
-      createHappyPlugin(
-        'css',
-        ['css-loader', 'postcss-loader']
-      ),
-      createHappyPlugin(
-        'cssModules',
-        [
-          'css-loader',
-          'postcss-loader'
-        ]
-      ),
-      createHappyPlugin(
-        'lessModules',
-        [
-          'css-loader', 'postcss-loader',
-          {
-            loader: 'less-loader',
-            options: {
-              javascriptEnabled: true
-            }
-          }
-        ]
-      ),
-      createHappyPlugin(
-        'less',
-        [
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              import: true,
-              importLoaders: 1,
-              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
-              sourceMap: true
-            }
-          },
-          { loader: 'postcss-loader', options: { sourceMap: true } },
-          {
-            loader: 'less-loader',
-            options: {
-              outputStyle: 'expanded',
-              sourceMap: true,
-              javascriptEnabled: true,
-              sourceMapContents: !isDev
-            }
-          }
-        ]
-      )
-    );
-  }
   return plugins;
 };
 
 // 使用 happypack 时不能携带query.
 // https://github.com/amireh/happypack/issues/145
 const getBabelLoaders = () => {
-  if (isHappy) {
-    return {
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      loader: 'happypack/loader?id=babel'
-    };
-  }
   return {
     test: /\.(js|jsx)$/,
     exclude: /node_modules/,
@@ -168,12 +100,6 @@ const getBabelLoaders = () => {
     }
   };
 };
-const vendor = [
-  'react',
-  'react-dom',
-  'redbox-react',
-  'axios'
-];
 module.exports = {
   name: 'client',
   target: 'web',
@@ -218,7 +144,6 @@ module.exports = {
         test: /\.css$/,
         include: /node_modules/,
         use: ExtractTextPlugin.extract(
-          isHappy ? ('style-loader', 'happypack/loader?id=cssModules') :
           [
             'style-loader', 'css-loader', 'postcss-loader'
           ]
@@ -228,7 +153,6 @@ module.exports = {
         test: /\.css$/,
         exclude: /node_modules/,
         use: ExtractTextPlugin.extract(
-          isHappy ? ('style-loader', 'happypack/loader?id=css') :
           [
             'style-loader',
             'css-loader',
@@ -239,7 +163,6 @@ module.exports = {
         test: /\.less$/,
         include: /node_modules/,
         use: ExtractTextPlugin.extract(
-          isHappy ? ('style-loader', 'happypack/loader?id=lessModules') :
           [
             'css-loader', 'postcss-loader', 
               {
@@ -254,7 +177,6 @@ module.exports = {
         test: /\.less$/,
         exclude: /node_modules/,
         use: ExtractTextPlugin.extract(
-          isHappy ? 'happypack/loader?id=less' : 
           [
             {
               loader: 'css-loader',

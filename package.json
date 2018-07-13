@@ -1,5 +1,5 @@
 {
-  "name": "maby-webpack",
+  "name": "sc-data-entry",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --progress --watch",
     "start": "better-npm-run start",
+    "analyzer": "better-npm-run analyzer",
     "build": "better-npm-run build"
   },
   "betterScripts": {
@@ -25,12 +26,23 @@
         "NODE_ENV": "production",
         "PORT": 3600
       }
+    },
+    "analyzer": {
+      "command": "webpack --progress --json > stats.json --config webpack.config.js",
+      "env": {
+        "NODE_PATH": "./src",
+        "NODE_ENV": "production",
+        "ANALYZER": true,
+        "PORT": 3600
+      }
     }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
+    "autodll-webpack-plugin": "0.3",
     "autoprefixer": "^8.5.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -58,11 +70,12 @@
     "express": "^4.16.2",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.5",
-    "happypack": "^4.0.1",
+    "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "immutable": "3.7.4",
     "less": "^3.0.1",
     "less-loader": "^4.1.0",
+    "node-uuid": "^1.4.8",
     "os": "^0.1.1",
     "pathval": "^1.1.0",
     "postcss-loader": "^2.1.4",
@@ -73,6 +86,7 @@
     "stylelint": "^8.0.0",
     "stylelint-webpack-plugin": "^0.10.5",
     "uglifyjs-webpack-plugin": "^1.1.4",
+    "url-loader": "^1.0.1",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.9.7",
     "webpack-parallel-uglify-plugin": "^1.1.0"
@@ -88,6 +102,7 @@
     "mockjs": "^1.0.1-beta3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-router": "3.2.1"
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2"
   }
 }

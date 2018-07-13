@@ -15,6 +15,12 @@
         "libraryDirectory": "es",
         "style": true
       }
+    ],
+    [
+      "transform-class-properties",
+      {
+        "spec": true
+      }
     ]
   ],
   "env": {

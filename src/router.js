@@ -1,22 +1,25 @@
 import React from 'react';
-import { Route, IndexRoute, Redirect } from 'react-router';
-import handleTitle from 'helpers/handleTitle';
-import {
-  App,
-  HomePage,
-} from 'containers';
+import { Route, Redirect } from 'react-router';
+import loadable from 'helpers/loadable';
+import handleTitle from 'helpers';
+import { App } from 'containers';
 
-// 各个路由进入时的配置
-function requireAuth(allStores, nextState, replace) {
-  const title = handleTitle(nextState.location);
-  document.title = title;
-}
-export default ({ allStores }) => {
-  return (
-    <Route path="/" component={App}>
-      <IndexRoute component={HomePage} />
-      <Route path="/home" exact component={HomePage} onEnter={requireAuth.bind(null, allStores)} />
-      <Redirect from="*" to="/" />
-    </Route>
-  );
-};
+const NoMatch = () => 'not found';
+// 按需加载
+const HomePage = loadable(() =>
+  import('routes/HomePage' /* webpackChunkName: 'HomePage' */));
+
+const SecondPage = loadable(() =>
+  import('routes/SecondPage' /* webpackChunkName: 'SecondPage' */));
+
+export default [
+  {
+    path: '/',
+    exact: true,
+    component: HomePage
+  },
+  {
+    path: '*',
+    component: NoMatch
+  }
+];
