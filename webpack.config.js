@@ -22,7 +22,7 @@ const stylelint = false;
 const vendor = [
   'react',
   'react-dom',
-  // 'react-loadable',
+  'mockjs',
   'redbox-react',
   'axios'
 ];
@@ -58,7 +58,6 @@ const getPlugins = () => {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest'
     }),
-    new StyleLintPlugin({ failOnError: stylelint }),
     new webpack.EnvironmentPlugin({ NODE_ENV: JSON.stringify(nodeEnv) }),
     new webpack.DefinePlugin({
       'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
@@ -69,6 +68,7 @@ const getPlugins = () => {
   if (isDev) {
     plugins.push(
       new webpack.HotModuleReplacementPlugin(),
+      new StyleLintPlugin({ failOnError: stylelint }),
       new webpack.NamedModulesPlugin()
     );
   } else {
