@@ -1,6 +1,11 @@
 import React from 'react';
 import { Router, Route, Switch } from 'dva/router';
 import loadable from 'utils/loadable';
+// import Authorized from 'components/common/Authorized';
+
+// 权限路由
+// const { AuthorizedRoute } = Authorized;
+
 // 直接加载
 // import HomePage from './routes/HomePage';
 

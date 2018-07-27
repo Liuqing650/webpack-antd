@@ -1,9 +1,9 @@
-import {request} from 'utils';
+import axios from 'axios';
 
 export function getUser(params) {
-  return request.get('/api/getUser', params);
+  return axios.get('/api/getUser', {params}).catch(error => error);
 }
 
 export function getList() {
-  return request.get('/api/list');
+  return axios.get('/api/list').catch(error => error);
 }

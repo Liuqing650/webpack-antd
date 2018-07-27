@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const HappyPack = require('happypack');
@@ -22,7 +22,7 @@ const stylelint = false;
 const vendor = [
   'react',
   'react-dom',
-  // 'react-loadable',
+  'mockjs',
   'redbox-react',
   'axios'
 ];
@@ -62,6 +62,7 @@ const getPlugins = () => {
     new webpack.EnvironmentPlugin({ NODE_ENV: JSON.stringify(nodeEnv) }),
     new webpack.DefinePlugin({
       'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
+      'process.env.NODE_ENV': JSON.stringify(nodeEnv),
       __DEV__: isDev
     }),
     new webpack.NoEmitOnErrorsPlugin()
@@ -76,14 +77,15 @@ const getPlugins = () => {
     plugins.push(
       new CleanWebpackPlugin(['public/dist']),
       new webpack.HashedModuleIdsPlugin(),
-      new ParallelUglifyPlugin({
-        cacheDir: '.cache/', // 开启缓存功能
-        uglifyJS: {
-          output: {
-            comments: false
-          },
+      new UglifyJSPlugin({
+        uglifyOptions:{
+          beautify: true, // 最紧凑的输出
+          comments: true, // 删除所有的注释
           compress: {
-            warnings: false
+            warnings: false,
+            drop_console: true, // 删除所有的 `console` 语句
+            collapse_vars: true,
+            reduce_vars: true, // 提取出出现多次但是没有定义成变量去引用的静态值
           }
         }
       }),

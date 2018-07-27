@@ -1,7 +1,7 @@
 import config from './config';
-import request from './request';
+import loadable from './loadable';
 
 export {
   config,
-  request
+  loadable
 };

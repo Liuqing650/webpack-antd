@@ -8,6 +8,7 @@ import router from './router';
 import home from './models/home';
 // 引入全局样式
 import './index.less';
+import './utils/axiosRequest';
 // 引入mock
 import './mock';
 
