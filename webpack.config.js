@@ -6,14 +6,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const AutoDllPlugin = require('autodll-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const os = require('os');
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 const ANALYZER = process.env.ANALYZER || false;
 
+const isAutoDll = isDev; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
 
@@ -72,7 +73,6 @@ const getPlugins = () => {
         from: 'assets/*', context: 'public/'
       }]),
       new ParallelUglifyPlugin({
-        cacheDir: '.cache/', // 开启缓存功能
         uglifyJS: {
           output: {
             comments: false
@@ -84,6 +84,18 @@ const getPlugins = () => {
       }),
       new webpack.optimize.ModuleConcatenationPlugin()
     );
+  }
+  if (isAutoDll) {
+    plugins.push(
+      new AutoDllPlugin({
+        context: path.resolve(process.cwd()),
+        inject: true,
+        filename: '[name].dll.js',
+        entry: {
+          vendor
+        }
+      })
+    )
   }
   return plugins;
 };

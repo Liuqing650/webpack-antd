@@ -1,9 +1,5 @@
 {
-  "presets": [
-    "react",
-    "es2015",
-    "stage-0"
-  ],
+  "presets": ["react", "es2015", "stage-0"],
   "comments": true,
   "plugins": [
     "transform-runtime",
@@ -14,12 +10,6 @@
         "libraryName": "antd",
         "libraryDirectory": "es",
         "style": true
-      }
-    ],
-    [
-      "transform-class-properties",
-      {
-        "spec": true
       }
     ]
   ],

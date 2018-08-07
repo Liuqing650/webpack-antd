@@ -1,25 +1,29 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router';
+import { Route, IndexRoute, Redirect } from 'react-router';
 import loadable from 'helpers/loadable';
-import handleTitle from 'helpers';
-import { App } from 'containers';
+import {handleTitle} from 'helpers';
+import App from 'containers/App';
 
-const NoMatch = () => 'not found';
 // 按需加载
 const HomePage = loadable(() =>
-  import('routes/HomePage' /* webpackChunkName: 'HomePage' */));
+  import('containers/HomePage' /* webpackChunkName: 'HomePage' */));
 
-const SecondPage = loadable(() =>
-  import('routes/SecondPage' /* webpackChunkName: 'SecondPage' */));
+const FirstPage = loadable(() =>
+  import('containers/FirstPage' /* webpackChunkName: 'FirstPage' */));
 
-export default [
-  {
-    path: '/',
-    exact: true,
-    component: HomePage
-  },
-  {
-    path: '*',
-    component: NoMatch
-  }
-];
+const renderTitle = (location) => {
+  const title = handleTitle(location.pathname, location.query);
+  document.title = title;
+};
+function requireAuth(stores, nextState, replace) {
+  renderTitle(nextState.location);
+}
+export default (stores) => {
+  return (
+    <Route path="/" component={App}>
+      <IndexRoute component={HomePage} onEnter={requireAuth.bind(null, stores)} />
+      <Route path="page" component={FirstPage} onEnter={requireAuth.bind(null, stores)} />
+      <Redirect from="*" to="/" />
+    </Route>
+  );
+};

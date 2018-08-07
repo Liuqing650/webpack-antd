@@ -1,17 +1,14 @@
+import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
+import { Router, browserHistory } from 'react-router';
 import axios from 'axios';
-import Uuid from 'node-uuid';
+import Uuid from 'uuid';
 import { Provider } from 'mobx-react';
-import * as allStores from 'stores';
+import * as stores from 'stores';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
-import config from 'utils/config';
 import getRoutes from './router';
-import App from './containers/app';
 
-const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
 const history = syncHistoryWithStore(browserHistory, routingStore);
 const renderDom = document.getElementById('root');
@@ -46,12 +43,10 @@ axios.interceptors.response.use((response) => response, (error) => {
   return Promise.reject(error);
 });
 
-allStores.routing = routingStore;
+stores.routing = routingStore;
 ReactDOM.render(
-  <Provider {...allStores}>
-    <Router history={browserHistory}>        
-      <App />
-    </Router>
+  <Provider {...stores}>
+    <Router routes={getRoutes(stores)} history={history} />
   </Provider>,
   renderDom
 );

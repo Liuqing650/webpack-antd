@@ -40,3 +40,26 @@ export const caclulateTextLength = (text, fontSize = 14, width = 760, maxLine = 
     lastText
   };
 };
+
+function commonTitleHandle(pathname) {
+  const titleDict = {
+    '/': 'mobx',
+    '/test': '测试页面',
+  };
+  if (titleDict[pathname]) {
+    return titleDict[pathname];
+  }
+  return 'demo';
+}
+
+export function handleTitle(pathname, query) {
+  let title = '';
+  switch (true) {
+    case /^\/articleDetails$/.test(pathname):
+      title = `${decodeURIComponent(query.title)}`;
+      break;
+    default:
+      title = commonTitleHandle(pathname);
+  }
+  return title;
+}
