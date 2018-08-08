@@ -4,7 +4,7 @@ import { Spin } from 'antd';
 const LoadingHoc = (WrapComponent) => {
   const LoadingWrapper = (props) => {
     return (
-      <Spin spinning={props.loading}>
+      <Spin spinning={props.homeStore.loading}>
         <WrapComponent {...props} />
       </Spin>
     );

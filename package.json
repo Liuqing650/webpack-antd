@@ -8,6 +8,7 @@
     "watch": "webpack --progress --watch",
     "start": "better-npm-run start",
     "analyzer": "better-npm-run analyzer",
+    "preview": "better-npm-run build && cd ./public/dist && anywhere",
     "build": "better-npm-run build"
   },
   "betterScripts": {
@@ -83,13 +84,12 @@
     "style-loader": "^0.19.1",
     "stylelint": "^8.0.0",
     "stylelint-webpack-plugin": "^0.10.5",
-    "uglifyjs-webpack-plugin": "^1.1.4",
+    "uglifyjs-webpack-plugin": "^1.2.7",
     "url-loader": "^1.0.1",
     "uuid": "^3.3.2",
     "webpack": "^3.10.0",
     "webpack-bundle-analyzer": "^2.13.1",
-    "webpack-dev-server": "^2.9.7",
-    "webpack-parallel-uglify-plugin": "^1.1.0"
+    "webpack-dev-server": "^2.9.7"
   },
   "dependencies": {
     "antd": "^3.5.2",

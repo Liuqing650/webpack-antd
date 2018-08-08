@@ -1,1 +1,5 @@
-export homeStore from './home';
+import homeStore from './home';
+
+export {
+  homeStore
+};

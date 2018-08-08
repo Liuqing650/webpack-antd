@@ -1,0 +1,137 @@
+
+@skParentWidth: 25px;
+@skParentHeight: 30px;
+
+@skChildWidth: 3px;
+@skChildWidthSmall: 2px;
+
+@marginLeftRight: 1px;
+@animateSecends: 1.5s;
+
+.react-box {
+  display: inline-block;
+  width: @skChildWidth;
+  height: 100%;
+  margin-left: @marginLeftRight;
+  margin-right: @marginLeftRight;
+
+  background-color: #42A5F5;
+}
+
+.rect1 {
+  -webkit-animation-delay: -1.2s;
+          animation-delay: -1.2s;
+}
+.rect2 {
+  -webkit-animation-delay: -1.1s;
+          animation-delay: -1.1s;
+}
+.rect3 {
+  -webkit-animation-delay: -1s;
+          animation-delay: -1s;
+}
+.rect4 {
+  -webkit-animation-delay: -0.9s;
+          animation-delay: -0.9s;
+}
+.rect5 {
+  -webkit-animation-delay: -0.8s;
+          animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-waveStretchDelay {
+  0%, 40%, 100% {
+    -webkit-transform: scaleY(0.4);
+            transform: scaleY(0.4);
+  }
+  20% {
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
+}
+
+@keyframes sk-waveStretchDelay {
+  0%, 40%, 100% {
+    -webkit-transform: scaleY(0.4);
+            transform: scaleY(0.4);
+  }
+  20% {
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+    }
+}
+
+.animateLoading {
+  width: 100%;
+  height: 100%;
+}
+
+// 长条动画
+.sk-wave {
+  margin-left: auto;
+  margin-right: auto;
+  width: @skParentWidth;
+  height: @skParentHeight;
+  text-align: center;
+  font-size: 10px;
+}
+.sk-wave .sk-rect {
+  .react-box;
+
+  -webkit-animation: sk-waveStretchDelay @animateSecends infinite ease-in-out;
+          animation: sk-waveStretchDelay @animateSecends infinite ease-in-out;
+}
+
+.sk-wave .sk-rect1 {
+  .rect1;
+}
+.sk-wave .sk-rect2 {
+  .rect2;
+}
+.sk-wave .sk-rect3 {
+  .rect3;
+}
+.sk-wave .sk-rect4 {
+  .rect4;
+}
+.sk-wave .sk-rect5 {
+  .rect5;
+}
+
+// 短条动画
+.sk-small-wave {
+  .sk-wave;
+  height: 100%;
+}
+.sk-small-wave .sk-small-rect {
+  .react-box;
+  width: @skChildWidthSmall;
+
+  -webkit-transform-origin: center bottom;
+          transform-origin: center bottom;
+
+  -webkit-animation: sk-waveStretchDelay @animateSecends infinite ease-in-out;
+          animation: sk-waveStretchDelay @animateSecends infinite ease-in-out;
+}
+
+.sk-small-wave .sk-small-rect1 {
+  .rect1;
+}
+.sk-small-wave .sk-small-rect2 {
+  .rect2;
+}
+.sk-small-wave .sk-small-rect3 {
+  .rect3;
+}
+
+.animateLoadingBox {
+  display: table;
+  width: 100%;
+
+  text-align: center;
+
+  .animateLoading {
+    display: table-cell;
+    vertical-align: middle;
+  }
+}

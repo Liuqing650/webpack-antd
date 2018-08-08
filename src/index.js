@@ -9,6 +9,9 @@ import * as stores from 'stores';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import getRoutes from './router';
 
+// 引入mock
+import './mock';
+
 const routingStore = new RouterStore();
 const history = syncHistoryWithStore(browserHistory, routingStore);
 const renderDom = document.getElementById('root');

@@ -4,10 +4,10 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
@@ -72,8 +72,8 @@ const getPlugins = () => {
       new CopyWebpackPlugin([{ 
         from: 'assets/*', context: 'public/'
       }]),
-      new ParallelUglifyPlugin({
-        uglifyJS: {
+      new UglifyJsPlugin({
+        uglifyOptions: {
           output: {
             comments: false
           },
