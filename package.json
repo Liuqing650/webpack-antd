@@ -1,6 +1,6 @@
 {
   "name": "maby-webpack",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "treer": "node ./treer.js -e ./public/antd_dva_tree.txt -i \"(node_modules|dist|.git|preview|.cache)\"",
     "start": "better-npm-run start",
     "build": "better-npm-run build",
+    "analyzer": "better-npm-run analyzer",
     "preview": "better-npm-run preview && npm run clean && make preview",
     "clean": "make clean"
   },
@@ -18,7 +19,9 @@
       "env": {
         "NODE_PATH": "./src",
         "NODE_ENV": "development",
-        "PORT": 3300
+        "PORT": 3300,
+        "HOST": "localhost",
+        "APIPORT": 8080
       }
     },
     "build": {
@@ -29,13 +32,25 @@
         "PORT": 3600
       }
     },
+    "analyzer": {
+      "command": "webpack --json > stats.json --config webpack.config.js",
+      "env": {
+        "NODE_PATH": "./src",
+        "NODE_ENV": "production",
+        "ANALYZER": true,
+        "PORT": 12222
+      }
+    },
     "preview": {
       "command": "webpack --progress --config webpack.config.js",
       "env": {
         "NODE_PATH": "./src",
         "NODE_ENV": "production",
         "ASSET_PATH": "./",
-        "PORT": 3600
+        "PREVIEW": true,
+        "PORT": 3600,
+        "HOST": "127.0.0.1",
+        "APIPORT": 18081
       }
     }
   },
@@ -91,9 +106,10 @@
     "stylelint": "^8.0.0",
     "stylelint-webpack-plugin": "^0.10.5",
     "uglifyjs-webpack-plugin": "^1.1.4",
+    "url-loader": "^1.0.1",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7",
-    "webpack-parallel-uglify-plugin": "^1.1.0"
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-dev-server": "^2.9.7"
   },
   "dependencies": {
     "antd": "^3.5.2",

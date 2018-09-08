@@ -4,15 +4,23 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const AutoDllPlugin = require('autodll-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HappyPack = require('happypack');
 const os = require('os');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
+const ANALYZER = process.env.ANALYZER || false;
+
+// 环境
+const PORT_ENV = process.env.PORT || 3000;
+const HOST_ENV = process.env.HOST || '';
+const APIPORT_ENV = process.env.APIPORT || 18081;
+const PREVIEW = process.env.PREVIEW || false;
 
 const isHappy = false; // 开启多线程打包
 const isAutoDll = true; // 是否开启 autodll
@@ -27,7 +35,7 @@ const vendor = [
   'axios'
 ];
 
-console.log(isDev ? '开发模式' : '发布模式');
+console.log(isDev ? `开发模式: ${HOST_ENV}:${PORT_ENV}` : `发布模式: ${HOST_ENV}:${PORT_ENV}`);
 
 HappyPack.SERIALIZABLE_OPTIONS = HappyPack.SERIALIZABLE_OPTIONS.concat(['postcss'])
 // 构建HappyPlugin应用
@@ -61,7 +69,11 @@ const getPlugins = () => {
     new webpack.EnvironmentPlugin({ NODE_ENV: JSON.stringify(nodeEnv) }),
     new webpack.DefinePlugin({
       'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
-      __DEV__: isDev
+      __DEV__: isDev,
+      __PORT__: PORT_ENV,
+      __HOST__: JSON.stringify(HOST_ENV),
+      __APIPORT__: JSON.stringify(APIPORT_ENV),
+      __PREVIEW__: PREVIEW
     }),
     new webpack.NoEmitOnErrorsPlugin()
   ];
@@ -75,21 +87,22 @@ const getPlugins = () => {
     plugins.push(
       new CleanWebpackPlugin(['public/dist']),
       new webpack.HashedModuleIdsPlugin(),
-      new ParallelUglifyPlugin({
-        cacheDir: '.cache/', // 开启缓存功能
-        uglifyJS: {
-          output: {
-            comments: false
-          },
-          compress: {
-            warnings: false
-          }
-        }
-      }),
       new webpack.optimize.ModuleConcatenationPlugin(),
       new CopyWebpackPlugin([{ 
         from: 'assets/*', context: 'public/'
-      }])
+      }]),
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          beautify: true, // 最紧凑的输出
+          comments: true, // 删除所有的注释
+          compress: {
+            warnings: false,
+            drop_console: !PREVIEW, // 删除所有的 `console` 语句
+            collapse_vars: true,
+            reduce_vars: true, // 提取出出现多次但是没有定义成变量去引用的静态值
+          }
+        }
+      }),
     );
   }
   if (isAutoDll) {
@@ -103,6 +116,11 @@ const getPlugins = () => {
         }
       })
     )
+  }
+  if (ANALYZER) {
+    plugins.push(
+      new BundleAnalyzerPlugin(),
+    );
   }
   if (isHappy) {
     plugins.push(
@@ -189,6 +207,100 @@ const getBabelLoaders = () => {
     }
   };
 };
+// 获取loaders
+const webpackLoaders = () => {
+  const loaders = [
+    getBabelLoaders(),
+    {
+      test: /\.css$/,
+      include: /node_modules/,
+      use: ExtractTextPlugin.extract(
+        {
+          fallback: 'style-loader',
+          use:['css-loader', 'postcss-loader']
+        },
+      )
+    },
+    {
+      test: /\.css$/,
+      exclude: /node_modules/,
+      use: ExtractTextPlugin.extract(
+        {
+          fallback: 'style-loader',
+          use:['css-loader', 'postcss-loader']
+        },
+      )
+    }, {
+      test: /\.less$/,
+      include: /node_modules/,
+      use: ExtractTextPlugin.extract(
+        [
+          'css-loader', 'postcss-loader', 
+            {
+              loader: 'less-loader',
+              options: {
+                javascriptEnabled: true
+              }
+            }
+        ]
+      )
+    }, {
+      test: /\.less$/,
+      exclude: /node_modules/,
+      use: ExtractTextPlugin.extract(
+        [
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              import: true,
+              importLoaders: 1,
+              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+              sourceMap: true
+            }
+          },
+          { loader: 'postcss-loader', options: { sourceMap: true } },
+          {
+            loader: 'less-loader',
+            options: {
+              outputStyle: 'expanded',
+              sourceMap: true,
+              javascriptEnabled: true,
+              sourceMapContents: !isDev
+            }
+          }
+        ]
+      )
+    },
+    {
+      test: /\.(png|svg|jpg|gif)$/,
+      use: [
+        {
+          loader: 'url-loader',
+          options: {
+            limit: 10240
+          }
+        }
+      ]
+    },
+    {
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      use: [
+        'file-loader'
+      ]
+    }
+  ];
+  
+  if (eslint) {
+    loaders.unshift({
+      test: /\.(js|jsx)?$/,
+      enforce: 'pre',
+      exclude: /node_modules/,
+      loader: 'eslint-loader'
+    });
+  }
+  return loaders;
+};
 module.exports = {
   name: 'client',
   target: 'web',
@@ -211,6 +323,7 @@ module.exports = {
     contentBase: path.join(__dirname, "public"),
     historyApiFallback: false,
     overlay: true,
+    port: PORT_ENV,
     stats: {
       modules: false,
       colors: true
@@ -226,97 +339,7 @@ module.exports = {
   },
   plugins: getPlugins(),
   module: {
-    loaders: [
-      {
-        test: /\.(js|jsx)?$/,
-        enforce: 'pre',
-        exclude: /node_modules/,
-        loader: 'eslint-loader'
-      },
-      getBabelLoaders(),
-      {
-        test: /\.css$/,
-        include: /node_modules/,
-        use: ExtractTextPlugin.extract(
-          isHappy ? ('style-loader', 'happypack/loader?id=cssModules') :
-          [
-            'style-loader', 'css-loader', 'postcss-loader'
-          ]
-        )
-      },
-      {
-        test: /\.css$/,
-        exclude: /node_modules/,
-        use: ExtractTextPlugin.extract(
-          isHappy ? ('style-loader', 'happypack/loader?id=css') :
-          [
-            'style-loader',
-            'css-loader',
-            'postcss-loader'
-          ]
-        )
-      }, {
-        test: /\.less$/,
-        include: /node_modules/,
-        use: ExtractTextPlugin.extract(
-          isHappy ? ('style-loader', 'happypack/loader?id=lessModules') :
-          [
-            'css-loader', 'postcss-loader', 
-              {
-                loader: 'less-loader',
-                options: {
-                  javascriptEnabled: true
-                }
-              }
-          ]
-        )
-      }, {
-        test: /\.less$/,
-        exclude: /node_modules/,
-        use: ExtractTextPlugin.extract(
-          isHappy ? 'happypack/loader?id=less' : 
-          [
-            {
-              loader: 'css-loader',
-              options: {
-                modules: true,
-                import: true,
-                importLoaders: 1,
-                localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
-                sourceMap: true
-              }
-            },
-            { loader: 'postcss-loader', options: { sourceMap: true } },
-            {
-              loader: 'less-loader',
-              options: {
-                outputStyle: 'expanded',
-                sourceMap: true,
-                javascriptEnabled: true,
-                sourceMapContents: !isDev
-              }
-            }
-          ]
-        )
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10240
-            }
-          }
-        ]
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: [
-          'file-loader'
-        ]
-      }
-    ]
+    loaders: webpackLoaders()
   },
   resolve: {
     modules: [path.resolve(__dirname, 'src/'), 'node_modules'],

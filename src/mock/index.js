@@ -2,7 +2,7 @@ import Mock from 'mockjs';
 
 // mock响应时间ms
 Mock.setup({
-  timeout: 1000
+  timeout: 300
 });
 
 Mock.mock(/\/api\/getUser\?/, 'get', {

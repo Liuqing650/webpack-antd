@@ -1,6 +1,48 @@
 
 > The latest CHANGELOG is written in https://github.com/Liuqing650/webpack-antd/releases .
 
+## `1.0.2`
+
+  - 针对 `webpack.config.js` 中潜在问题做了优化和修复
+  - 删除多线程压缩插件 `webpack-parallel-uglify-plugin`, 由于可能会在压缩后 `manifest.js` 的 `hash` 值不一致，导致页面访问报错
+  - 使用 `uglifyjs-webpack-plugin` 替换原有的压缩方案， 压缩效果更好，且压缩时间有所缩减
+  - `webpack.config.js` 中原有的 `eslint` 配置无效，现已提取 `loaders` 配置到 `webpackLoaders()` 方法中， 默认开启`eslint`
+  - 修改 `package.json` 的配置， 新增部分启动参数以及一个构建分析工具 `webpack-bundle-analyzer`， 构建分析命令 `npm run analyzer`
+    `package.json` 新增启动参数： `PREVIEW` 开启预览模式， `HOST` 和 `APIPORT` 是后台 `API` 访问主机及端口，默认打包时后将在同一台服务器上运行
+  - `package.json` 新增启动端口配置： `PORT` 配置在 `webpack.devServer` 中可生效，默认服务端口：`3000`
+  - 修复潜在问题， `node_modules` 中少部分引用库中的 `css` 解析时报错： `window is not defined` 错误，导致启动或编译失败
+    修复点：
+      ```js
+        /* 修正前 */
+        {
+          test: /\.css$/,
+          include: /node_modules/,
+          use: ExtractTextPlugin.extract(['css-loader', 'postcss-loader'])
+        },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: ExtractTextPlugin.extract(['css-loader', 'postcss-loader'])
+        }
+        /* 修正后 */
+        {
+          test: /\.css$/,
+          include: /node_modules/,
+          use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use:['css-loader', 'postcss-loader']
+          })
+        },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use:['css-loader', 'postcss-loader']
+          })
+        }
+      ```
+
 ## `1.0.1`
 
   - 添加新分支`antd-dva`,配置 `webpack` + `dva`
