@@ -22,8 +22,8 @@ const HOST_ENV = process.env.HOST || '';
 const APIPORT_ENV = process.env.APIPORT || 18081;
 const PREVIEW = process.env.PREVIEW || false;
 
-const isHappy = false; // 开启多线程打包
-const isAutoDll = true; // 是否开启 autodll
+const isHappy = true; // 开启多线程打包
+const isAutoDll = isDev; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
 
