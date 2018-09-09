@@ -5,6 +5,7 @@
 
   - 针对 `webpack.config.js` 中潜在问题做了优化和修复
   - 删除多线程压缩插件 `webpack-parallel-uglify-plugin`, 由于可能会在压缩后 `manifest.js` 的 `hash` 值不一致，导致页面访问报错
+  - 多线程打包功能并不理想，删除 `happypack` ，原有的多线程 `happypack` 方案移动到新分支 `webpack-antd-happypack`
   - 使用 `uglifyjs-webpack-plugin` 替换原有的压缩方案， 压缩效果更好，且压缩时间有所缩减
   - `webpack.config.js` 中原有的 `eslint` 配置无效，现已提取 `loaders` 配置到 `webpackLoaders()` 方法中， 默认开启`eslint`
   - 修改 `package.json` 的配置， 新增部分启动参数以及一个构建分析工具 `webpack-bundle-analyzer`， 构建分析命令 `npm run analyzer`

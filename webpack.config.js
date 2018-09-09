@@ -7,8 +7,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const HappyPack = require('happypack');
-const os = require('os');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const nodeEnv = process.env.NODE_ENV || 'development';
@@ -22,7 +20,6 @@ const HOST_ENV = process.env.HOST || '';
 const APIPORT_ENV = process.env.APIPORT || 18081;
 const PREVIEW = process.env.PREVIEW || false;
 
-const isHappy = false; // 开启多线程打包
 const isAutoDll = true; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
@@ -36,16 +33,6 @@ const vendor = [
 ];
 
 console.log(isDev ? `开发模式: ${HOST_ENV}:${PORT_ENV}` : `发布模式: ${HOST_ENV}:${PORT_ENV}`);
-
-HappyPack.SERIALIZABLE_OPTIONS = HappyPack.SERIALIZABLE_OPTIONS.concat(['postcss'])
-// 构建HappyPlugin应用
-const createHappyPlugin = (id, loaders) => new HappyPack({
-  id,
-  loaders,
-  cache: true,
-  threadPool: HappyPack.ThreadPool({ size: os.cpus().length - 1 }),
-  verbose: true, // 日志
-});
 
 // 设置插件环境 development/prodcution
 const getPlugins = () => {
@@ -122,95 +109,20 @@ const getPlugins = () => {
       new BundleAnalyzerPlugin(),
     );
   }
-  if (isHappy) {
-    plugins.push(
-      createHappyPlugin(
-        'babel',
-        [
-          {
-            loader: 'babel-loader',
-            query: {
-              cacheDirectory: isDev
-            }
-          }
-        ]
-      ),
-      createHappyPlugin(
-        'css',
-        ['css-loader', 'postcss-loader']
-      ),
-      createHappyPlugin(
-        'cssModules',
-        [
-          'css-loader',
-          'postcss-loader'
-        ]
-      ),
-      createHappyPlugin(
-        'lessModules',
-        [
-          'css-loader', 'postcss-loader',
-          {
-            loader: 'less-loader',
-            options: {
-              javascriptEnabled: true
-            }
-          }
-        ]
-      ),
-      createHappyPlugin(
-        'less',
-        [
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              import: true,
-              importLoaders: 1,
-              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
-              sourceMap: true
-            }
-          },
-          { loader: 'postcss-loader', options: { sourceMap: true } },
-          {
-            loader: 'less-loader',
-            options: {
-              outputStyle: 'expanded',
-              sourceMap: true,
-              javascriptEnabled: true,
-              sourceMapContents: !isDev
-            }
-          }
-        ]
-      )
-    );
-  }
   return plugins;
 };
 
-// 使用 happypack 时不能携带query.
-// https://github.com/amireh/happypack/issues/145
-const getBabelLoaders = () => {
-  if (isHappy) {
-    return {
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      loader: 'happypack/loader?id=babel'
-    };
-  }
-  return {
-    test: /\.(js|jsx)$/,
-    exclude: /node_modules/,
-    loader: 'babel-loader',
-    query: {
-      cacheDirectory: isDev
-    }
-  };
-};
 // 获取loaders
 const webpackLoaders = () => {
   const loaders = [
-    getBabelLoaders(),
+    {
+      test: /\.(js|jsx)$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      query: {
+        cacheDirectory: isDev
+      }
+    },
     {
       test: /\.css$/,
       include: /node_modules/,
