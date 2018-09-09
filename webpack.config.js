@@ -215,7 +215,7 @@ const webpackLoaders = () => {
       test: /\.css$/,
       include: /node_modules/,
       use: ExtractTextPlugin.extract(
-        {
+        isHappy ? ('style-loader', 'happypack/loader?id=cssModules') : {
           fallback: 'style-loader',
           use:['css-loader', 'postcss-loader']
         },
@@ -225,7 +225,7 @@ const webpackLoaders = () => {
       test: /\.css$/,
       exclude: /node_modules/,
       use: ExtractTextPlugin.extract(
-        {
+        isHappy ? ('style-loader', 'happypack/loader?id=css') : {
           fallback: 'style-loader',
           use:['css-loader', 'postcss-loader']
         },
@@ -234,7 +234,7 @@ const webpackLoaders = () => {
       test: /\.less$/,
       include: /node_modules/,
       use: ExtractTextPlugin.extract(
-        [
+        isHappy ? ('style-loader', 'happypack/loader?id=lessModules') : [
           'css-loader', 'postcss-loader', 
             {
               loader: 'less-loader',
@@ -248,7 +248,7 @@ const webpackLoaders = () => {
       test: /\.less$/,
       exclude: /node_modules/,
       use: ExtractTextPlugin.extract(
-        [
+        isHappy ? 'happypack/loader?id=less' : [
           {
             loader: 'css-loader',
             options: {
