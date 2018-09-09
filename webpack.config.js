@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const fs = require('fs');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -23,6 +24,22 @@ const PREVIEW = process.env.PREVIEW || false;
 const isAutoDll = true; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
+
+// 获取主题颜色
+const pkgPath = path.resolve(__dirname, './package.json');
+const pkg = fs.existsSync(pkgPath) ? require(pkgPath) : {};
+let theme = {};
+if (pkg.theme && typeof pkg.theme === 'string') {
+  let cfgPath = pkg.theme;
+  // relative path
+  if (cfgPath.charAt(0) === '.') {
+    cfgPath = path.resolve(__dirname, cfgPath);
+  }
+  const getThemeConfig = require(cfgPath);
+  theme = getThemeConfig();
+} else if (pkg.theme && typeof pkg.theme === 'object') {
+  theme = pkg.theme;
+}
 
 const vendor = [
   'react',
@@ -151,7 +168,8 @@ const webpackLoaders = () => {
             {
               loader: 'less-loader',
               options: {
-                javascriptEnabled: true
+                javascriptEnabled: true,
+                modifyVars: theme
               }
             }
         ]
