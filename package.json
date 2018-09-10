@@ -6,11 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --progress --watch",
-    "treer": "node ./treer.js -e ./public/antd_dva_tree.txt -i \"(node_modules|dist|.git|preview|.cache)\"",
+    "treer": "node ./treer.js -e ./public/antd_dva_tree.txt -i \"(node_modules|dist|.git|preview|.cache|LICENSE)\"",
     "start": "better-npm-run start",
     "build": "better-npm-run build",
     "analyzer": "better-npm-run analyzer",
     "preview": "better-npm-run preview && npm run clean && make preview",
+    "preview：win": "better-npm-run preview && cd ./public/dist && anywhere",
     "clean": "make clean"
   },
   "betterScripts": {
@@ -96,6 +97,7 @@
     "less-loader": "^4.1.0",
     "node-uuid": "^1.4.8",
     "postcss-loader": "^2.1.4",
+    "react-hot-loader": "^4.3.6",
     "react-loadable": "^5.4.0",
     "react-transform-catch-errors": "^1.0.2",
     "redbox-react": "^1.6.0",

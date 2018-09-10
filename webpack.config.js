@@ -21,7 +21,7 @@ const HOST_ENV = process.env.HOST || '';
 const APIPORT_ENV = process.env.APIPORT || 18081;
 const PREVIEW = process.env.PREVIEW || false;
 
-const isAutoDll = true; // 是否开启 autodll
+const isAutoDll = isDev; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
 
@@ -238,7 +238,7 @@ module.exports = {
   profile: isDev, // 是否捕捉 Webpack 构建的性能信息
   context: path.resolve(process.cwd()),
   entry: {
-    index: './src/index.js',
+    index: ['react-hot-loader/patch', 'webpack/hot/only-dev-server', './src/index.js'],
     vendor
   },
   devtool: isDev ? 'inline-source-map' : 'hidden-source-map',
@@ -253,6 +253,7 @@ module.exports = {
     contentBase: path.join(__dirname, "public"),
     historyApiFallback: false,
     overlay: true,
+    hot: true,
     port: PORT_ENV,
     stats: {
       modules: false,

@@ -1,7 +1,6 @@
 .idea/
 .vscode/
 .cache/
-treer.js
 node_modules/
 public/dist/*
 public/antd_dva_tree.txt
