@@ -57,7 +57,8 @@ const getPlugins = () => {
   const plugins = [
     new ExtractTextPlugin({
       filename: '[name].[contenthash:8].css',
-      allChunks: true
+      allChunks: true,
+      disable: isDev
     }),
     new HtmlWebpackPlugin({
       title: 'webpack-antd',
@@ -163,43 +164,49 @@ const webpackLoaders = () => {
       test: /\.less$/,
       include: /node_modules/,
       use: ExtractTextPlugin.extract(
-        [
-          'css-loader', 'postcss-loader', 
-            {
-              loader: 'less-loader',
-              options: {
-                javascriptEnabled: true,
-                modifyVars: theme
+        {
+          fallback: 'style-loader',
+          use:[
+            'css-loader', 'postcss-loader', 
+              {
+                loader: 'less-loader',
+                options: {
+                  javascriptEnabled: true,
+                  modifyVars: theme
+                }
               }
-            }
-        ]
+          ]
+        }
       )
     }, {
       test: /\.less$/,
       exclude: /node_modules/,
       use: ExtractTextPlugin.extract(
-        [
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              import: true,
-              importLoaders: 1,
-              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
-              sourceMap: true
+        {
+          fallback: 'style-loader',
+          use:[
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                import: true,
+                importLoaders: 1,
+                localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+                sourceMap: true
+              }
+            },
+            { loader: 'postcss-loader', options: { sourceMap: true } },
+            {
+              loader: 'less-loader',
+              options: {
+                outputStyle: 'expanded',
+                sourceMap: true,
+                javascriptEnabled: true,
+                sourceMapContents: !isDev
+              }
             }
-          },
-          { loader: 'postcss-loader', options: { sourceMap: true } },
-          {
-            loader: 'less-loader',
-            options: {
-              outputStyle: 'expanded',
-              sourceMap: true,
-              javascriptEnabled: true,
-              sourceMapContents: !isDev
-            }
-          }
-        ]
+          ]
+        }
       )
     },
     {
@@ -238,7 +245,7 @@ module.exports = {
   profile: isDev, // 是否捕捉 Webpack 构建的性能信息
   context: path.resolve(process.cwd()),
   entry: {
-    index: ['react-hot-loader/patch', 'webpack/hot/only-dev-server', './src/index.js'],
+    index: './src/index.js',
     vendor
   },
   devtool: isDev ? 'inline-source-map' : 'hidden-source-map',
@@ -251,7 +258,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, "public"),
-    historyApiFallback: false,
+    historyApiFallback: false, // 如果使用 createBrowserHistory 那么应该设置为 true
     overlay: true,
     hot: true,
     port: PORT_ENV,
@@ -261,11 +268,6 @@ module.exports = {
     },
     headers: {
       'maby': 'demo'
-    },
-    overlay: true,
-    stats: {
-      color: true,
-      modules: false
     }
   },
   plugins: getPlugins(),

@@ -5,6 +5,7 @@
 
   - 新增 `package.json` 中配置 `ant-design` 主题颜色
   - 新增模块热替换插件 `react-hot-loader`
+  - 移除 `babel-plugin-dva-hmr` 插件，因为在 `webpack-server-dev` 下似乎并未起到任何有效作用
   - 针对 `webpack.config.js` 中潜在问题做了优化和修复
   - 删除多线程压缩插件 `webpack-parallel-uglify-plugin`, 由于可能会在压缩后 `manifest.js` 的 `hash` 值不一致，导致页面访问报错
   - 多线程打包功能并不理想，删除 `happypack` ，原有的多线程 `happypack` 方案移动到新分支 `webpack-antd-happypack`
@@ -13,6 +14,32 @@
   - 修改 `package.json` 的配置， 新增部分启动参数以及一个构建分析工具 `webpack-bundle-analyzer`， 构建分析命令 `npm run analyzer`
     `package.json` 新增启动参数： `PREVIEW` 开启预览模式， `HOST` 和 `APIPORT` 是后台 `API` 访问主机及端口，默认打包时后将在同一台服务器上运行
   - `package.json` 新增启动端口配置： `PORT` 配置在 `webpack.devServer` 中可生效，默认服务端口：`3000`
+  - 使用热替换功能时 `webpack.config.js` 中部分配置做了调整
+    ```js
+      /* plugins */
+      new ExtractTextPlugin({
+        filename: '[name].[contenthash:8].css',
+        allChunks: true,
+      + disable: isDev
+      })
+      /* loaders */
+      {
+        test: /\.less$/,
+        exclude: /node_modules/, /* include: /node_modules/ 同样做了配置修改 */
+        use: ExtractTextPlugin.extract(
+      +   {
+      +     fallback: 'style-loader',
+      +     use:[
+              {
+                loader: 'css-loader',
+                options: ...
+              },
+              ...
+            ]
+      +   }
+        )
+      }
+    ```
   - 修复潜在问题， `node_modules` 中少部分引用库中的 `css` 解析时报错： `window is not defined` 错误，导致启动或编译失败
     修复点：
       ```js
