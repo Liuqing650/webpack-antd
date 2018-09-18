@@ -4,12 +4,12 @@ import { getUser, getList } from 'services/home';
 export default {
   namespace: 'home',
   state: {
-    msg: 'init state...',
+    msg: 'init state 123...',
     listData: ['一段文字'],
     loading: false,
     tableData: [{
       key: '1',
-      name: '胡彦斌',
+      name: '胡彦斌22',
       age: 32,
       address: '西湖区湖底公园1号'
     }, {
@@ -42,7 +42,7 @@ export default {
       yield put({
         type: 'change',
         payload: {
-          msg: 'new state...'
+          msg: 'new state5...'
         }
       });
     },
@@ -64,6 +64,7 @@ export default {
     *getList({ payload }, { call, put }) {
       yield put({type: 'change', payload: {loading: true}});
       const data = yield call(getList);
+      console.log('data---->', data);
       message.success('列表数据已经刷新...');
       const date = new Date();
       const time = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() + 1} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;

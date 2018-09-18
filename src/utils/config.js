@@ -1,3 +1,3 @@
 export default {
-  host: 'http://localhost:8080'
+  host: __DEV__ || __PREVIEW__ ? `http://${__HOST__}:${__APIPORT__}` : '',
 };

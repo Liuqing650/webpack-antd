@@ -3,5 +3,6 @@
 .cache/
 node_modules/
 public/dist/*
+public/antd_dva_tree.txt
 npm-debug.log
 yarn-error.log

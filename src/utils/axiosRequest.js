@@ -1,17 +1,13 @@
 import axios from 'axios';
-import Uuid from 'uuid';
-import * as util from 'helpers';
+import Uuid from 'node-uuid';
 import { message } from 'antd';
 
-const userInfo = util.getUserInfo();
-// 设置请求超时
-axios.defaults.timeout = 1000;
 // 拦截axios 处理token信息
 axios.interceptors.request.use(
   axiosConfig => {
     if (!axiosConfig.isCancelTocken) {
-      axiosConfig.headers['auth-id'] = `${userInfo ? userInfo.authId : Uuid.v4()}`;
-      axiosConfig.headers['auth-token'] = 'sc-data';
+      axiosConfig.headers['auth-id'] = `${Uuid.v4()}`;
+      axiosConfig.headers['auth-token'] = 'maby-antd';
       axiosConfig.headers['Cache-Control'] = 'no-cache';
     }
     if (!axiosConfig.params) {
@@ -33,8 +29,8 @@ axios.interceptors.response.use((response) => response, (error) => {
   if (axios.isCancel(error)) {
     return Promise.reject(error);
   }
-  if (error && error.response.data.code === 401002) {
-    window.location.href = '/#/login';
+  if (error && error.response.data.errorCode === 401000) {
+    window.location.href = '/';
   }
   message.error('response error!!!');
   return Promise.reject(error);

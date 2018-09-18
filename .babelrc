@@ -6,9 +6,10 @@
   ],
   "comments": true,
   "plugins": [
+    "add-module-exports",
+    "react-hot-loader/babel",
     "transform-runtime",
     "transform-decorators-legacy",
-    "dva-hmr",
     [
       "import",
       {
