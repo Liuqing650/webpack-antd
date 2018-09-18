@@ -4,12 +4,12 @@ import { getUser, getList } from 'services/home';
 export default {
   namespace: 'home',
   state: {
-    msg: 'init state 123...',
+    msg: 'init state...',
     listData: ['一段文字'],
     loading: false,
     tableData: [{
       key: '1',
-      name: '胡彦斌22',
+      name: '胡彦斌',
       age: 32,
       address: '西湖区湖底公园1号'
     }, {
@@ -42,7 +42,7 @@ export default {
       yield put({
         type: 'change',
         payload: {
-          msg: 'new state5...'
+          msg: 'new state...'
         }
       });
     },

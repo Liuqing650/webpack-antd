@@ -62,7 +62,7 @@ const getPlugins = () => {
     }),
     new HtmlWebpackPlugin({
       title: 'webpack-antd',
-      template: path.join(process.cwd(), '/public/index.html')
+      template: path.join(process.cwd(), '/src/index.ejs')
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',

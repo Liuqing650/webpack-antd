@@ -72,10 +72,8 @@ const drawDirTree = (data, placeholder) => {
 
 		if (typeof data[i] === 'string') {
 
-			// console.log(placeholder + data[i])
 			outputString += '\n' + placeholder + data[i]
 		} else if (Array.isArray(data[i])) {
-			// console.log(placeholder + i)
 			outputString += '\n' + placeholder + i
 			placeholder = placeholder.replace(new RegExp(`${contain}`, "g"), border)
 			placeholder = placeholder.replace(new RegExp(`${line}`, "g"), " ")
@@ -93,7 +91,6 @@ const drawDirTree = (data, placeholder) => {
 				}
 
 				if (typeof val === 'string') {
-					// console.log(pl + val)
 					outputString += '\n' + pl + val
 				} else {
 					let pl = placeholder
@@ -106,9 +103,6 @@ const drawDirTree = (data, placeholder) => {
 drawDirTree(result, "")
 outputString = outputString.replace(/^\n/,'')
 
-// console.log(outputString)
-
-// 写出文件到制定位置
 if (program.export) {
 	fs.writeFile(program.export, outputString, (err) => {
 		if (err) throw err;
