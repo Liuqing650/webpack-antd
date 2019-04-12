@@ -1,10 +1,11 @@
 import React from 'react';
 import { observer, inject} from 'mobx-react';
+import history from 'helpers/history';
 import { toJS } from 'mobx';
 import TableCom from 'components/common/tables';
 import { Button } from 'antd';
 
-const HomePage = ({ homeStore, routing }) => {
+const HomePage = ({ homeStore }) => {
   const { tableData, msg, update } = homeStore;
   const tabelProps = {
     tableData: toJS(tableData),
@@ -13,7 +14,7 @@ const HomePage = ({ homeStore, routing }) => {
     }
   };
   const onJump = () => {
-    routing.push('/page');
+    history.push('/page');
   };
   return (
     <div>
@@ -25,4 +26,4 @@ const HomePage = ({ homeStore, routing }) => {
     </div>
   );
 };
-export default inject('homeStore', 'routing')(observer(HomePage));
+export default inject('homeStore')(observer(HomePage));

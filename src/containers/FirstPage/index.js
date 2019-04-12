@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { observer, inject} from 'mobx-react';
+import { observer } from 'mobx-react';
 import { Button } from 'antd';
+import history from 'helpers/history';
 
-@inject('routing')
 @observer
 export default class FirstPage extends Component {
   render() {
     const onBack = () => {
-      this.props.routing.push('/');
+      history.push('/');
     };
     return (
       <div>

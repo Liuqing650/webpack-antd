@@ -5,7 +5,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const AutoDllPlugin = require('autodll-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
@@ -14,7 +13,6 @@ const isDev = nodeEnv !== 'production';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 const ANALYZER = process.env.ANALYZER || false;
 
-const isAutoDll = isDev; // 是否开启 autodll
 const eslint = true;
 const stylelint = false;
 
@@ -85,18 +83,6 @@ const getPlugins = () => {
       new webpack.optimize.ModuleConcatenationPlugin()
     );
   }
-  if (isAutoDll) {
-    plugins.push(
-      new AutoDllPlugin({
-        context: path.resolve(process.cwd()),
-        inject: true,
-        filename: '[name].dll.js',
-        entry: {
-          vendor
-        }
-      })
-    )
-  }
   return plugins;
 };
 
@@ -132,7 +118,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, "public"),
-    historyApiFallback: true,
+    historyApiFallback: false,
     overlay: true,
     stats: {
       modules: false,
